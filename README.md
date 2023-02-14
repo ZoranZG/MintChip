@@ -56,7 +56,7 @@ a numeric that indicates the leftmost genomic coordinate for plotting viewing. I
 #### xmax:
 a numeric that indicates the rightmost genomic coordinate for plotting viewing. If not specified, automatically generated from the interactions, features, and gene_list.
 
-#### color_palette:
+#### color_pallete:
 The RColorBrewer palette to use for annotating the genomic interations, default is "Dark2"
 
 
