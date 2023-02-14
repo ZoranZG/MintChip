@@ -165,19 +165,19 @@ mintchip <- function(interactions = NULL,
 
   ## interactions should be non-null
   if(is.null(interactions)){
-    stop('interactions cannot be null, interactions must be a data.frame or data.table.')
+    stop(message('"interactions" cannot be null, "interactions" must be a data.frame or data.table.'))
   }
 
 
   ## Interactions should be a data.frame or data.table
   interaction_class = class(interactions)
   if(interaction_class[1] == 'data.table'){
-    cat('interactions object identified as a data.table.\n')
+    cat(message('"interactions" object identified as a data.table.\n'))
   } else if(interaction_class[1] == 'data.frame'){
-    cat('interactions identified as a data.frame, internally converting to data.table.\n')
+    cat(message('"interactions" identified as a data.frame, internally converting to data.table.\n'))
     interactions = as.data.table(interactions)
   } else{ ## Interactions is not a data.frame or data.table
-    stop('interactions cannot be null, interactions must be a data.frame or data.table.\n')
+    stop(message('"interactions" cannot be null, interactions must be a data.frame or data.table.\n'))
   }
 
 
@@ -303,7 +303,7 @@ mintchip <- function(interactions = NULL,
     }
     ## check to see if there is a 'color' column, if not create an empty color column
     if(!('color' %in% colnames(features))){
-      features$color = 'col'
+      features$color = 'blue'
     }
 
 
@@ -461,6 +461,9 @@ mintchip <- function(interactions = NULL,
 
 }
 
+message = function(text){
+  return(paste0('MintChip ', Sys.time(), ': ',text))
+}
 
 ## converts the genes into boxes for plottingv
 poly_genes = function(name, start, end, fill, color, height = -0.1, yset = 0){
