@@ -50,25 +50,68 @@
 "hg19_gene_locations"
 
 
-#' Genomic build hg38 gencode gene locations
+#' Sample fragments for demo
+#'
+#' Sample interactions obtained from Xue et al.
+#'
+#' @format ## `frags_demo`
+#' A data.table with 143 rows and 4 columns:
+#' \describe{
+#'   \item{start,end}{start and end of the sample interactions}
+#'   \item{thickness}{example strand thicknesses for demo interactions}
+#'   \item{annotation}{example annotations for demo interactions}
+#' }
+#' @source Xue et al.
+"frags_demo"
+
+
+#' Sample features for demo
+#'
+#' Sample features for demo, shares some start and end locations with interactions
+#'
+#' @format ## `features_demo`
+#' A data.table with 4 rows and 2 columns:
+#' \describe{
+#'   \item{start,end}{start and end of the sample features}
+#' }
+#' @source Xue et al.
+"frags_demo"
+
+
+#' Sample fragments for demo
+#'
+#' Sample fragments obtained from Xue et al.
+#'
+#' @format ## `frags_demo`
+#' A data.table with 143 rows and 4 columns:
+#' \describe{
+#'   \item{start,end}{start and end of the sample features}
+#'   \item{thickness}{example strand thicknesses for demo}
+#'   \item{annotation}{example annotations for demo}
+#' }
+#' @source Xue et al.
+"frags_demo"
+
+
+#' Genomic build hg19 gencode gene locations
 #'
 #' Gencode gene locations. Includes the exons, introns and UTRs
 #'
 #' Code used to generate dataset:
 #' install_github(mskilab/gTrack)
 #' library(gTrack)
-#' gt38 = track.gencode(build = 'hg38')
-#' dat = gt38@data
-#' dt_38 = mclapply(1:length(dat[[1]]), function(x){
+#' gt19 = track.gencode(build = 'hg19')
+#' dat = gt19@data
+#' dt_19 = mclapply(1:length(dat[[1]]), function(x){
 #'   g = dat[[1]][[x]]
 #'   gr2dt(g[g$type == 'gene'])
 #' }, mc.cores = 8)
-#' hg38_gene_locations = rbindlist(dt_19)
-#' usethis::use_data(hg38_gene_locations)
+#' hg19_gene_locations = rbindlist(dt_19)
+#' usethis::use_data(hg19_gene_locations)
 #'
 #'
-#' @format ## `hg38_gene_locations`
-#' A data.table with 48,532 rows and 12 columns:
+#' @format ## `hg19_gene_locations`
+#' A data.table with 46,096 rows and 12 columns:
 #' \describe{
 #'   \item{seqnames}{Chromosome location}
 #'   \item{start,end}{start and end of the gene from build hg19, includes UTRs}
@@ -82,8 +125,8 @@
 #'   \item{type.1}{Artifact of the original dataset used to generate this file}
 #'   \item{tx.ord}{Artifact of the original dataset used to generate this file}
 #' }
-#' @source <http://mskilab.com/gTrack/hg38//gencode.composite.collapsed.rds>
-"hg38_gene_locations"
+#' @source <http://mskilab.com/gTrack/hg19//gencode.composite.collapsed.rds>
+"hg19_gene_locations"
 
 
 #' @name mintchip
@@ -146,6 +189,7 @@ mintchip <- function(interactions = NULL,
                      color_palette = "Dark2") {
 
   ## Name:
+  cat("\n\n")
   cat("########################################################################\n\n")
   cat("                              Welcome To\n\n")
   cat("########################################################################\n")
@@ -183,23 +227,23 @@ mintchip <- function(interactions = NULL,
 
   ## Interactions needs to have the columns 'start' and 'end'
   if(!all(c('start', 'end') %in% colnames(interactions))){
-    stop("interactions must have the column names: 'start' and 'end")
+    stop(message("interactions must have the column names: 'start' and 'end"))
   }
 
   ## start column must be numeric
   if(!inherits(interactions$start, 'numeric')){
-    stop("the 'start' column in the interactions table must be of class numeric")
+    stop(message("the 'start' column in the interactions table must be of class numeric"))
   }
   ## end column must be numeric
   if(!inherits(interactions$end, 'numeric')){
-    stop("the 'end' column in the interactions table must be of class numeric")
+    stop(message("the 'end' column in the interactions table must be of class numeric"))
   }
 
 
   ## checking to see if there is an annotations column in the interactions table
   annotation = F
   if('annotation' %in% colnames(interactions)){
-    cat('annotations column identified in the interactions table.\n')
+    cat(message('annotations column identified in the interactions table.\n'))
     annotation = T
   }
 
@@ -207,37 +251,37 @@ mintchip <- function(interactions = NULL,
   ## checking to see if there is a thickness column in the interactions table
   thickness = F
   if('thickness' %in% colnames(interactions)){
-    cat('thickness column identified in interactions table.\n')
+    cat(message('thickness column identified in interactions table.\n'))
     thickness = T
   }
 
 
-  cat('checking to make sure height_scale is a numeric between [0,Inf)\n')
+  cat(message('checking to make sure height_scale is a numeric between [0,Inf)\n'))
   ## height_scale must be a 0 or positive numeric value
   if(!inherits(height_scale, 'numeric')){
-    stop('height_scale must be a numberic value')
+    stop(message('height_scale must be a numberic value'))
   }
   if(height_scale < 0){
-    stop('height_scale must be greater than or equal to 0')
+    stop(message('height_scale must be greater than or equal to 0'))
   }
 
 
-  cat('checking to make sure thickness_scale is a numeric between [0,Inf)\n')
+  cat(message('checking to make sure thickness_scale is a numeric between [0,Inf)\n'))
   ## thickness_scale must be a 0 or positive numeric value
   if(!inherits(thickness_scale, 'numeric')){
-    stop('thickness_scale must be a numberic value')
+    stop(message('thickness_scale must be a numberic value'))
   }
   if(thickness_scale < 0){
-    stop('thickness_scale must be greater than or equal to 0')
+    stop(message('thickness_scale must be greater than or equal to 0'))
   }
 
 
   ## alpha must be a numeric between 0 and 1
   if(!inherits(alpha, 'numeric')){
-    stop('alpha must be a numeric value')
+    stop(message('alpha must be a numeric value'))
   }
   if(!(alpha >= 0 & alpha <= 1)){
-    stop('alpha must have a value between [0,1]')
+    stop(message('alpha must have a value between [0,1]'))
   }
 
   ## Generating the data.table that we'll be using for plotting.
@@ -275,31 +319,31 @@ mintchip <- function(interactions = NULL,
     ## features should be a data.frame or data.table
     feature_class = class(features)
     if(feature_class[1] == 'data.table'){
-      cat('features object identified as a data.table.\n')
+      cat(message('features object identified as a data.table.\n'))
     } else if(feature_class[1] == 'data.frame'){
-      cat('features identified as a data.frame, internally converting to data.table.\n')
+      cat(message('features identified as a data.frame, internally converting to data.table.\n'))
       features = as.data.table(features)
     } else{ ## features is not a data.frame or data.table
-      stop('features can only be null, a data.frame, or data.table.\n')
+      stop(message('features can only be null, a data.frame, or data.table.\n'))
     }
 
 
     ## features needs to have the columns 'start' and 'end'
     if(!all(c('start', 'end') %in% colnames(features))){
-      stop("features must have the column names: 'start' and 'end")
+      stop(message("features must have the column names: 'start' and 'end"))
     }
 
     ## start column must be numeric
     if(!inherits(features$start, 'numeric')){
-      stop("the 'start' column in the features table must be of class numeric")
+      stop(message("the 'start' column in the features table must be of class numeric"))
     }
     ## end column must be numeric
     if(!inherits(features$end, 'numeric')){
-      stop("the 'end' column in the features table must be of class numeric")
+      stop(message("the 'end' column in the features table must be of class numeric"))
     }
     ## check to see if there is a 'name' column, if not create an empty name column
     if(!('name' %in% colnames(features))){
-      features$name = ''
+      features$name = paste0('Feature: ', 1:nrow(features))
     }
     ## check to see if there is a 'color' column, if not create an empty color column
     if(!('color' %in% colnames(features))){
@@ -321,13 +365,13 @@ mintchip <- function(interactions = NULL,
 
 
   } else{
-    cat('No features object detected\n')
+    cat(message('No features object detected\n'))
   }
 
   ## Gene features
   if(!is.null(gene_list)){
     if(!(genome_build %in% c('hg19', 'hg38'))){
-      stop('Invalid build, build must be one of "hg19" or "hg38"')
+      stop(message('Invalid build, build must be one of "hg19" or "hg38"'))
     }
     ## Valid build
     if(genome_build == 'hg19'){
@@ -338,13 +382,13 @@ mintchip <- function(interactions = NULL,
     ## subsetting reference
     ## making sure gene_list is a character vector
     if(!inherits(gene_list,'character')){
-      stop('gene_list can either be NULL or of class character')
+      stop(message('gene_list can either be NULL or of class character'))
     }
     ref_sub = ref[ref$gene_name %in% gene_list]
     if(length(ref_sub) < 1){
-      warning('no valid genes found, make sure gene_list contains gene_names found in:
+      warning(message('no valid genes found, make sure gene_list contains gene_names found in:
               MintChip::hg19_gene_locations if using hg19 or
-              MintChip::hg38_gene_locations if using hg38')
+              MintChip::hg38_gene_locations if using hg38'))
     } else{
       dt_poly_genes = rbindlist(lapply(1:nrow(ref_sub), function(x){
         poly_genes(name  = ref_sub$gene_name[x],
@@ -406,7 +450,7 @@ mintchip <- function(interactions = NULL,
     theme_classic() +
     scale_color_manual(values = legend_colors) +
     xlab('Genomic Position') + ylab('') +
-    annotate(geom = 'text', x = min(dt_plot$x)+0.05*(max(dt_plot$x)-min(dt_plot$x)),
+    annotate(geom = 'text', x = xmin+0.05*(xmax-xmin),
              y = (1.1-c(1:length(legend_colors))/10),
              label = names(legend_colors),
              col = legend_colors) +
@@ -422,7 +466,7 @@ mintchip <- function(interactions = NULL,
     curve = dt_plot[id == interaction]
     to_print = (interaction %% (10^(nci-2)) == 0) | (interaction == 1) | (interaction == nrow(interactions))
     if(to_print){
-      cat(paste('Fitting interaction: ', interaction, ' / ', nrow(interactions), '\n'))
+      cat(message(paste('Fitting interaction: ', interaction, ' / ', nrow(interactions), '\n')))
     }
     p = p +
       geom_line(data = curve,stat="smooth",method = "lm",
@@ -435,7 +479,7 @@ mintchip <- function(interactions = NULL,
   ## note we do a for loop and iteratively add each genebox and name
   if(!is.null(features)){
     for (feature in dt_poly[!duplicated(dt_poly$name)]$name){
-      cat(paste('Plotting Feature: ', feature, '\n'))
+      cat(message(paste('Plotting Feature: ', feature, '\n')))
       feature = dt_poly[name == feature]
       p = p + geom_polygon(data = feature,mapping=aes(x = x, y = y)) +
         annotate(geom="text", x=sum(feature$x)/4, y=-0.2, label=feature$name[1], col = feature$color[1], size = 2)
@@ -448,7 +492,7 @@ mintchip <- function(interactions = NULL,
     }
     if(nrow(dt_poly_genes) > 0){
       for (gene in dt_poly_genes[!duplicated(dt_poly_genes$name)]$name){
-        cat(paste('Plotting Gene: ', gene, '\n'))
+        cat(message(paste('Plotting Gene: ', gene, '\n')))
         gene = dt_poly_genes[name == gene]
         p = p + geom_polygon(data = gene,mapping=aes(x = x, y = y)) +
           annotate(geom="text", x=sum(gene$x)/4, y=min(gene$y -0.05), label=gene$name[1], col = gene$color[1], size = 2)
