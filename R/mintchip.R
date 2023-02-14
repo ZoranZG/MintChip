@@ -365,10 +365,22 @@ mintchip <- function(interactions = NULL,
 
   ## Defining min and max boundaries
   if(is.null(xmin)){
-    xmin = min(min(dt_plot$x), min(dt_poly$x))
+    xmin = min(dt_plot$x)
+    if(!is.null(features)){
+      xmin = min(xmin, min(dt_poly$x))
+    }
+    if(!is.null(gene_list)){
+      xmin = min(xmin, min(dt_poly_genes$x))
+    }
   }
   if(is.null(xmax)){
-    xmax = max(max(dt_plot$x), max(dt_poly$x))
+    xmax = max(dt_plot$x)
+    if(!is.null(features)){
+      xmax = max(xmax, max(dt_poly$x))
+    }
+    if(!is.null(gene_list)){
+      xmax = max(xmax, max(dt_poly_genes$x))
+    }
   }
 
   ## This is the plotting code:
@@ -421,11 +433,13 @@ mintchip <- function(interactions = NULL,
   }
   ## This is the code that creates the gene boxes and names for plotting
   ## note we do a for loop and iteratively add each genebox and name
-  for (feature in dt_poly[!duplicated(dt_poly$name)]$name){
-    cat(paste('Plotting Feature: ', feature, '\n'))
-    feature = dt_poly[name == feature]
-    p = p + geom_polygon(data = feature,mapping=aes(x = x, y = y)) +
-      annotate(geom="text", x=sum(feature$x)/4, y=-0.2, label=feature$name[1], col = feature$color[1], size = 2)
+  if(!is.null(features)){
+    for (feature in dt_poly[!duplicated(dt_poly$name)]$name){
+      cat(paste('Plotting Feature: ', feature, '\n'))
+      feature = dt_poly[name == feature]
+      p = p + geom_polygon(data = feature,mapping=aes(x = x, y = y)) +
+        annotate(geom="text", x=sum(feature$x)/4, y=-0.2, label=feature$name[1], col = feature$color[1], size = 2)
+    }
   }
   ## Check to see if we have any gene annotations, if we do, add them here
   if(!is.null(dt_poly_genes)){
