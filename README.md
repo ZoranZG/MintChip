@@ -1,8 +1,3 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
 MintChip
 =======
 
@@ -29,7 +24,7 @@ MintChip parameters
 ------------------
 
 The main utility in MintChip comes from the `mintchip` function which visualizes 
-genomic interations from experiments such as HiChip. MintChip is designed for visualizing interactions on single chromosomes. The mintchip function takes several arguements:
+genomic interactions from experiments such as HiChip. MintChip is designed for visualizing interactions on single chromosomes. The mintchip function takes several arguments:
 
 #### interactions: 
 a data.frame or data.table that contains start (default column name - 'start)' and end (default column name = 'end') coordinates of genomic interactions as well as any annotations you want to color by (default column name - 'annotation') and a numeric column that will map to interaction thickness (default column name - "thickness")
@@ -38,10 +33,10 @@ a data.frame or data.table that contains start (default column name - 'start)' a
 a data.frame or data.table that contains the start (default column name - 'start') and end (default column name = 'end') coordinates of genomic features that you would like to plot as well as the color you would like these elements to be (default column name - 'color') and any text annotations that you would like to add to the features (default column name - 'name')
 
 #### gene_list:
-a chacter vector of gene names that you would like to plot, can pick between hg19 and hg38 using the `genome_build` parameter.
+a character vector of gene names that you would like to plot, can pick between hg19 and hg38 using the `genome_build` parameter.
 
 #### genome_build:
-either "hg19" or "hg38" and indicates which genome buil to pull the gene annotations from.
+either "hg19" or "hg38" and indicates which genome build to pull the gene annotations from.
 
 #### alpha:
 a numeric value between 0 and 1 that specifies the transparency of the genomic interactions. alpha scales linearly with the number of overlaps, e.g. if alpha = 0.5 and two interactions intersect, their intersection will have the same transparency as one interaction at alpha = 1. alpha = 1 is no transparency. alpha = 0 is fully transparency.
@@ -62,7 +57,7 @@ a numeric that indicates the leftmost genomic coordinate for plotting viewing. I
 a numeric that indicates the rightmost genomic coordinate for plotting viewing. If not specified, automatically generated from the interactions, features, and gene_list.
 
 #### color_pallete:
-The RColorBrewer palette to use for annotating the genomic interations, default is "Dark2"
+The RColorBrewer palette to use for annotating the genomic interactions, default is "Dark2"
 
 
 Running MintChip
@@ -229,7 +224,7 @@ mintchip(interactions = MintChip::frags_demo,
 ```
 <img src="images/Tutorial_Image_14.svg" alt="some text"  width="1000" height="250">
 
-You can also change the color pallete
+You can also change the color palette
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
