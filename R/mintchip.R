@@ -500,7 +500,9 @@ mintchip <- function(interactions = NULL,
     }
   }
 
-
+  num_interactions = nrow(interactions)
+  plot_time = round(2.4-(0.011089*num_interactions)+(0.00014*num_interactions^2),2)
+  cat(message(paste0('Plotting will take approximately: ', as.character(plot_time), ' seconds.')))
   return(p)
 
 }
