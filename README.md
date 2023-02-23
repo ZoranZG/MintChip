@@ -240,3 +240,16 @@ mintchip(interactions = MintChip::frags_demo,
 <img src="images/Tutorial_Image_15.svg" alt="some text"  width="1000" height="250">
 
 
+You can also plot interactions on the bottom side of the plot by having the start 
+coordinate be more than the end coordinate
+
+```{r}
+mint_flip = MintChip::frags_demo
+mint_flip$start[c(128,26,138,69,27,48,2,102,101,13)] = max(mint_flip$end)+1
+mintchip(interactions = mint_flip,
+         features = MintChip::features_demo,
+         gene_list = c('CD274', 'JAK2'),
+         alpha = 0.5)
+```
+<img src="images/Tutorial_Image_16.svg" alt="some text"  width="1000" height="250">
+
