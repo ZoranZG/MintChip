@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 MintChip
 =======
 
@@ -65,14 +70,19 @@ Running MintChip
 
 Basic interaction visualization
 ```{r}
-mintchip(interactions = MintChip::frags_demo)
+mintchip(interactions = MintChip::frags_demo)\
 ```
+
+<img src="images/Tutorial_Image_1.svg" alt="some text"  width="1000" height="250">
+
 
 Visualizing interactions and user defined features
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo)
+         
 ```
+<img src="images/Tutorial_Image_2.svg" alt="some text"  width="1000" height="250">
 
 Visualizing interactions and genes
 note:
@@ -83,12 +93,17 @@ mintchip(interactions = MintChip::frags_demo,
          gene_list = c('CD274', 'JAK2'))   
 ```
 
+<img src="images/Tutorial_Image_3.svg" alt="some text"  width="1000" height="250">
+
+
 Visualizing interactions, feature and genes
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'))
 ```
+<img src="images/Tutorial_Image_4.svg" alt="some text"  width="1000" height="250">
+
 
 Adding in an alpha channel
 ```{r}
@@ -97,6 +112,7 @@ mintchip(interactions = MintChip::frags_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5)   
 ```
+<img src="images/Tutorial_Image_5.svg" alt="some text"  width="1000" height="250">
 
 Changing peak height
 height_scale of 1 makes height proportional to distance
@@ -107,6 +123,7 @@ mintchip(interactions = MintChip::frags_demo,
          alpha = 0.5,
          height_scale = 1) 
 ```
+<img src="images/Tutorial_Image_6.svg" alt="some text"  width="1000" height="250">
 
 height_scale >1 makes height exponential to distance (e.g. distance^height_scale)
 ```{r}
@@ -116,6 +133,7 @@ mintchip(interactions = MintChip::frags_demo,
          alpha = 0.5,
          height_scale = 4) 
 ```
+<img src="images/Tutorial_Image_7.svg" alt="some text"  width="1000" height="250">
 
 height_scale < 1 makes heights more similar (e.g. distance^0 = 1 for uniform heights)
 ```{r}
@@ -126,6 +144,8 @@ mintchip(interactions = MintChip::frags_demo,
          height_scale = 0)   
 
 ```
+<img src="images/Tutorial_Image_8.svg" alt="some text"  width="1000" height="250">
+
 
 Changing thickness
 Thickness is defined by the 'thickness' column in the interactions data
@@ -139,8 +159,10 @@ mintchip(interactions = MintChip::frags_demo,
          height_scale = 1,
          base_thickness = 5)
 ```
+<img src="images/Tutorial_Image_9.svg" alt="some text"  width="1000" height="250">
 
-base_thickness <1 decreasess size of all interactions uniformly
+
+base_thickness <1 decreases size of all interactions uniformly
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
@@ -149,6 +171,7 @@ mintchip(interactions = MintChip::frags_demo,
          height_scale = 1,
          base_thickness = 0.2)
 ```
+<img src="images/Tutorial_Image_10.svg" alt="some text"  width="1000" height="250">
 
 thickness_scale is similar to height scale except it works on thickness
 e.g. thickness_scale > 1 increases thickness exponentially (e.g. thickness^2)
@@ -161,6 +184,7 @@ mintchip(interactions = MintChip::frags_demo,
          base_thickness = 1,
          thickness_scale = 2)
 ```
+<img src="images/Tutorial_Image_11.svg" alt="some text"  width="1000" height="250">
 
 e.g. thickness_scale < 1 decreases thickness exponentially 
 and makes thickness more uniform (e.g. thickness^0 = 1)
@@ -173,6 +197,8 @@ mintchip(interactions = MintChip::frags_demo,
          base_thickness = 1,
          thickness_scale = 0)
 ```
+<img src="images/Tutorial_Image_12.svg" alt="some text"  width="1000" height="250">
+
 
 xmin and xmax can be used to change the plot view
 zooming out
@@ -187,6 +213,7 @@ mintchip(interactions = MintChip::frags_demo,
          xmin = 4000000,
          xmax = 7000000)
 ```
+<img src="images/Tutorial_Image_13.svg" alt="some text"  width="1000" height="250">
 
 zooming in
 ```{r}
@@ -200,6 +227,7 @@ mintchip(interactions = MintChip::frags_demo,
          xmin = 5100000,
          xmax = 5500000)
 ```
+<img src="images/Tutorial_Image_14.svg" alt="some text"  width="1000" height="250">
 
 You can also change the color pallete
 ```{r}
@@ -212,7 +240,8 @@ mintchip(interactions = MintChip::frags_demo,
          thickness_scale = 1,
          xmin = 5100000,
          xmax = 5500000,
-         color_palette = 'Spectral')
+         color_palette = 'Set1')
 ```
+<img src="images/Tutorial_Image_15.svg" alt="some text"  width="1000" height="250">
 
 
