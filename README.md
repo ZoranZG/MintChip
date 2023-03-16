@@ -109,24 +109,24 @@ mintchip(interactions = MintChip::frags_demo,
 ```
 <img src="images/Tutorial_Image_5.svg" alt="some text"  width="1000" height="250">
 
-Changing peak height
-height_scale of 1 makes height proportional to distance
+Changing peak curvature
+Curvature of <0 makes curves above the line y = 0 line.
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1) 
+         curvature = -1) 
 ```
 <img src="images/Tutorial_Image_6.svg" alt="some text"  width="1000" height="250">
 
-height_scale >1 makes height exponential to distance (e.g. distance^height_scale)
+Curvature of >0 makes curves below the line y = 0 line.
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 4) 
+         curvature = 0.5) 
 ```
 <img src="images/Tutorial_Image_7.svg" alt="some text"  width="1000" height="250">
 
@@ -163,7 +163,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 0.2)
 ```
 <img src="images/Tutorial_Image_10.svg" alt="some text"  width="1000" height="250">
@@ -175,7 +175,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 1,
          thickness_scale = 2)
 ```
@@ -188,7 +188,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 1,
          thickness_scale = 0)
 ```
@@ -202,7 +202,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 4000000,
@@ -216,7 +216,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 5100000,
@@ -230,7 +230,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.5,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 5100000,
@@ -241,7 +241,9 @@ mintchip(interactions = MintChip::frags_demo,
 
 
 You can also plot interactions on the bottom side of the plot by having the start 
-coordinate be more than the end coordinate
+coordinate be more than the end coordinate.
+
+This is not available in the current version of MintChip
 
 ```{r}
 mint_flip = MintChip::frags_demo

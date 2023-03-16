@@ -153,9 +153,10 @@
 #' same transparency as one interaction at alpha = 1.
 #' alpha = 1 is no transparency
 #' alpha = 0 is fully transparency
-#' @param height_scale a numeric (0,Inf) that sets the amount by which the higher peaks will stand out from lower peaks
-#' a high height_scale (e.g. 5) will yield highs that are much higher than the lows
-#' a low height_scale (e.g. 0.1) will yield a plot where most of the peaks are similar sizes
+#' @param curvature a numeric (-Inf,Inf) A numeric value giving the amount of curvature. 
+#' Negative values produce left-hand curves, 
+#' positive values produce right-hand curves, 
+#' and zero produces a straight line. Taken from geom_curves documentation.
 #' @param thickness_scale a numeric (0,Inf) that sets the amount by which the thicker peaks will stand out from thinner peaks
 #' a high thickness_scale (e.g. 5) will yield thick lines that are much thicker than the thinner lines
 #' a low thickness_scale (e.g. 0.1) will yield a plot where most of the lines are similar thickness
@@ -173,6 +174,7 @@
 #' @importFrom data.table as.data.table
 #' @importFrom data.table rbindlist
 #' @importFrom stats median
+#' @importFrom plyr mapvalues
 #' @return a ggplot object that visualizes the provided genomic interactions and features
 #' @author Zoran Z. Gajic
 #' @export
@@ -181,12 +183,12 @@ mintchip <- function(interactions = NULL,
                      gene_list = NULL,
                      genome_build = 'hg38',
                      alpha = 1,
-                     height_scale = 1,
                      thickness_scale = 1,
                      base_thickness = 1,
                      xmin = NULL,
                      xmax = NULL,
-                     color_palette = "Dark2") {
+                     color_palette = "Dark2",
+                     curvature = -0.5) {
 
   ## Name:
   cat("\n\n")
@@ -256,16 +258,6 @@ mintchip <- function(interactions = NULL,
   }
 
 
-  cat(message('checking to make sure height_scale is a numeric between [0,Inf)\n'))
-  ## height_scale must be a 0 or positive numeric value
-  if(!inherits(height_scale, 'numeric')){
-    stop(message('height_scale must be a numberic value'))
-  }
-  if(height_scale < 0){
-    stop(message('height_scale must be greater than or equal to 0'))
-  }
-
-
   cat(message('checking to make sure thickness_scale is a numeric between [0,Inf)\n'))
   ## thickness_scale must be a 0 or positive numeric value
   if(!inherits(thickness_scale, 'numeric')){
@@ -288,29 +280,9 @@ mintchip <- function(interactions = NULL,
   ## It creates three points per interaction.
   ## a start point, an end point and a middle point that we'll use to fit a parabola
   interactions$thickness = interactions$thickness/median(interactions$thickness)
-  dt_plot = rbindlist(lapply(1:nrow(interactions), function(x){
-    ix = interactions[x]
-    start = ix$start
-    end = ix$end
-    dt_para = data.table(
-      x = c(start,(start+end)/2,end),
-      y = c(0,(end-start)^height_scale,0),
-      id = x,
-      alpha = alpha
-    )
-    if(annotation){
-      dt_para$annotation = ix$annotation
-    } else{
-      dt_para$annotation = 'Interactions'
-    }
-    if(thickness){
-      dt_para$thickness = base_thickness*(ix$thickness^thickness_scale)
-    }
-    return(dt_para)
-  }))
 
-  ## This line normalizes the y axis of the plot to always be from 0-1
-  dt_plot$y = dt_plot$y/max(dt_plot$y)
+  ## Adjusting interaction thickness
+  interactions$thickness = base_thickness*(interactions$thickness^thickness_scale)
 
 
   ## Setting up for features
@@ -409,7 +381,7 @@ mintchip <- function(interactions = NULL,
 
   ## Defining min and max boundaries
   if(is.null(xmin)){
-    xmin = min(dt_plot$x)
+    xmin = min(interactions$start)
     if(!is.null(features)){
       xmin = min(xmin, min(dt_poly$x))
     }
@@ -418,7 +390,7 @@ mintchip <- function(interactions = NULL,
     }
   }
   if(is.null(xmax)){
-    xmax = max(dt_plot$x)
+    xmax = max(interactions$end)
     if(!is.null(features)){
       xmax = max(xmax, max(dt_poly$x))
     }
@@ -434,7 +406,7 @@ mintchip <- function(interactions = NULL,
   ## in which case we'll have to repeat colors, this is a noted limitation
   pal = rep(brewer.pal(n=8,color_palette), 1000)
   ## Find the number of colors we'll need
-  uni_fill = unique(dt_plot$annotation)
+  uni_fill = unique(interactions$annotation)
   ## create a data.table that maps features to colors
   fill_colors = data.table(uni_fill, color = pal[1:length(uni_fill)])
   ## making a vector for the legend colors
@@ -446,7 +418,7 @@ mintchip <- function(interactions = NULL,
   ## a legend annotation (annotate) which puts colored text
   ## where the text is the category and the color maps to the plot color
   ## Sets the xlab to chr9 genomic position (feel free to change this)
-  p = ggplot(dt_plot, aes(x = x, y = y)) +
+  p = ggplot(interactions, aes(x = start, y = 1)) +
     theme_classic() +
     scale_color_manual(values = legend_colors) +
     xlab('Genomic Position') + ylab('') +
@@ -457,24 +429,17 @@ mintchip <- function(interactions = NULL,
     theme(legend.position = "none") +
     theme(axis.text.y = element_blank()) +
     theme(axis.ticks.y = element_blank()) +
-    scale_x_continuous(limits = c(xmin, xmax))
+    scale_x_continuous(limits = c(xmin, xmax)) 
   ## This is the code the creates the parabolas for plotting
   ## note we do a for loop and iteratively add each parabola
   ## calculating rough number of elements for text output
   nci = nchar(nrow(interactions))
-  for (interaction in dt_plot[!duplicated(dt_plot$id)]$id){
-    curve = dt_plot[id == interaction]
-    to_print = (interaction %% (10^(nci-2)) == 0) | (interaction == 1) | (interaction == nrow(interactions))
-    if(to_print){
-      cat(message(paste('Fitting interaction: ', interaction, ' / ', nrow(interactions), '\n')))
-    }
-    p = p +
-      geom_line(data = curve,stat="smooth",method = "lm",
-                color = fill_colors[uni_fill == curve$annotation[1]]$color,
-                formula = y ~ poly(x, 2), span = 200,
-                se = FALSE,lineend="round", alpha = curve$alpha[1], size=curve$thickness[1],
-      )
-  }
+  ## plotting the curves
+  cat(message(paste('Fitting ',nrow(interactions), ' interactions', '\n')))
+  interactions$color = mapvalues(interactions$annotation, from = fill_colors$uni_fill, to = fill_colors$color)
+  p = p + geom_curve(data = interactions,aes(x = start, xend = end, y = 0, yend= 0),
+                     lineend = "round", curvature = curvature,ncp = 20, alpha = alpha,
+                     linewidth = interactions$thickness, color = interactions$color)
   ## This is the code that creates the gene boxes and names for plotting
   ## note we do a for loop and iteratively add each genebox and name
   if(!is.null(features)){
@@ -500,9 +465,6 @@ mintchip <- function(interactions = NULL,
     }
   }
 
-  num_interactions = nrow(interactions)
-  plot_time = round(2.4-(0.011089*num_interactions)+(0.00014*num_interactions^2),2)
-  cat(message(paste0('Plotting will take approximately: ', as.character(plot_time), ' seconds.')))
   return(p)
 
 }
