@@ -10,12 +10,12 @@ mintchip(
   gene_list = NULL,
   genome_build = "hg38",
   alpha = 1,
-  height_scale = 1,
   thickness_scale = 1,
   base_thickness = 1,
   xmin = NULL,
   xmax = NULL,
-  color_palette = "Dark2"
+  color_palette = "Dark2",
+  curvature = -0.25
 )
 }
 \arguments{
@@ -23,7 +23,10 @@ mintchip(
 (default column name - 'start' and end (default column name = 'end') coordinates of
 genomic interactions as well as any annotations you want to color by
 (default column name - 'annotation') and a numeric column that will
-map to interaction thickness (default column name - "thickness")}
+map to interaction thickness (default column name - "thickness")
+and a character column "strand" that can only contain ("+") or ("-") and that
+indicates whether to plot the loops on top ("+") or on bottom ("-") note that this
+stacks with curvature, so a positive curvature will invert the top and bottom.}
 
 \item{features}{a data.frame or data.table that contains the
 start (default column name - 'start') and end (default column name = 'end') coordinates of
@@ -44,10 +47,6 @@ same transparency as one interaction at alpha = 1.
 alpha = 1 is no transparency
 alpha = 0 is fully transparency}
 
-\item{height_scale}{a numeric (0,Inf) that sets the amount by which the higher peaks will stand out from lower peaks
-a high height_scale (e.g. 5) will yield highs that are much higher than the lows
-a low height_scale (e.g. 0.1) will yield a plot where most of the peaks are similar sizes}
-
 \item{thickness_scale}{a numeric (0,Inf) that sets the amount by which the thicker peaks will stand out from thinner peaks
 a high thickness_scale (e.g. 5) will yield thick lines that are much thicker than the thinner lines
 a low thickness_scale (e.g. 0.1) will yield a plot where most of the lines are similar thickness}
@@ -63,6 +62,11 @@ If not specified, automatically generated from the interactions, features, and g
 
 \item{color_palette}{The RColorBrewer palette to use for annotating the
 genomic interations, default is "Dark2"}
+
+\item{curvature}{a numeric (-Inf,Inf) A numeric value giving the amount of curvature. 
+Negative values produce left-hand curves, 
+positive values produce right-hand curves, 
+and zero produces a straight line. Taken from geom_curves documentation.}
 }
 \value{
 a ggplot object that visualizes the provided genomic interactions and features

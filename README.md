@@ -41,8 +41,8 @@ either "hg19" or "hg38" and indicates which genome build to pull the gene annota
 #### alpha:
 a numeric value between 0 and 1 that specifies the transparency of the genomic interactions. alpha scales linearly with the number of overlaps, e.g. if alpha = 0.5 and two interactions intersect, their intersection will have the same transparency as one interaction at alpha = 1. alpha = 1 is no transparency. alpha = 0 is fully transparency.
 
-#### height_scale:
-a numeric (0,Inf) that sets the amount by which the higher peaks will stand out from lower peaks a high height_scale (e.g. 5) will yield highs that are much higher than the lows a low height_scale (e.g. 0.1) will yield a plot where most of the peaks are similar sizes.
+#### curvature:
+a numeric (-Inf,Inf) A numeric value giving the amount of curvature. Negative values produce left-hand curves, positive values produce right-hand curves, and zero produces a straight line. Taken from geom_curves documentation.
 
 #### thickness_scale:
 a numeric (0,Inf) that sets the amount by which the thicker peaks will stand out from thinner peaks. A high thickness_scale (e.g. 5) will yield thick lines that are much thicker than the thinner lines. A low thickness_scale (e.g. 0.1) will yield a plot where most of the lines are similar thickness.
@@ -65,7 +65,7 @@ Running MintChip
 
 Basic interaction visualization
 ```{r}
-mintchip(interactions = MintChip::frags_demo)\
+mintchip(interactions = MintChip::frags_demo)
 ```
 
 <img src="images/Tutorial_Image_1.svg" alt="some text"  width="1000" height="250">
@@ -116,7 +116,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -1) 
+         curvature = -0.25)
 ```
 <img src="images/Tutorial_Image_6.svg" alt="some text"  width="1000" height="250">
 
@@ -126,20 +126,21 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = 0.5) 
+         curvature = 0.25) 
 ```
 <img src="images/Tutorial_Image_7.svg" alt="some text"  width="1000" height="250">
 
-height_scale < 1 makes heights more similar (e.g. distance^0 = 1 for uniform heights)
+Increasing the magnitude of curvature will make more 'curved' interactions while decreasing the magnitude of curvature will make interactions flatter. curvature of 0 is a straight line. See geom_curve documentation for additional info.
+
 ```{r}
 mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 0)   
-
+         curvature = -1) 
 ```
-<img src="images/Tutorial_Image_8.svg" alt="some text"  width="1000" height="250">
+<img src="images/Tutorial_Image_6.svg" alt="some text"  width="1000" height="250">
+
 
 
 Changing thickness
@@ -151,7 +152,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         height_scale = 1,
+         curvature = -0.25,
          base_thickness = 5)
 ```
 <img src="images/Tutorial_Image_9.svg" alt="some text"  width="1000" height="250">
@@ -163,7 +164,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 0.2)
 ```
 <img src="images/Tutorial_Image_10.svg" alt="some text"  width="1000" height="250">
@@ -175,7 +176,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 1,
          thickness_scale = 2)
 ```
@@ -188,7 +189,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 1,
          thickness_scale = 0)
 ```
@@ -202,7 +203,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 4000000,
@@ -216,7 +217,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 5100000,
@@ -230,7 +231,7 @@ mintchip(interactions = MintChip::frags_demo,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),
          alpha = 0.5,
-         curvature = -0.5,
+         curvature = -0.25,
          base_thickness = 1,
          thickness_scale = 1,
          xmin = 5100000,
@@ -240,14 +241,17 @@ mintchip(interactions = MintChip::frags_demo,
 <img src="images/Tutorial_Image_15.svg" alt="some text"  width="1000" height="250">
 
 
-You can also plot interactions on the bottom side of the plot by having the start 
-coordinate be more than the end coordinate.
-
-This is not available in the current version of MintChip
+You can also plot interactions on the bottom side of the plot by adding in a "strand"
+column to you interactions tables. The strand column is a character column that can 
+only have "+" and "-". "+" tells the program to plot an interaction on the top side 
+and "-" tells the program to plot the interation on the bottom side. 
+Be careful as this does stack with curvature, so a positive curvature will
+invert the plot putting "+" on bottom and "-" on top.
 
 ```{r}
 mint_flip = MintChip::frags_demo
-mint_flip$start[c(128,26,138,69,27,48,2,102,101,13)] = max(mint_flip$end)+1
+mint_flip$strand = '-'
+mint_flip$strand[c(128,26,138,69,27,48,2,102,101,13)] = "+"
 mintchip(interactions = mint_flip,
          features = MintChip::features_demo,
          gene_list = c('CD274', 'JAK2'),

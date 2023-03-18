@@ -138,6 +138,9 @@
 #' genomic interactions as well as any annotations you want to color by
 #' (default column name - 'annotation') and a numeric column that will
 #' map to interaction thickness (default column name - "thickness")
+#' and a character column "strand" that can only contain ("+") or ("-") and that
+#' indicates whether to plot the loops on top ("+") or on bottom ("-") note that this
+#' stacks with curvature, so a positive curvature will invert the top and bottom.
 #' @param features a data.frame or data.table that contains the
 #' start (default column name - 'start') and end (default column name = 'end') coordinates of
 #' genomic features that you would like to plot as well as the color you would like these
@@ -188,7 +191,7 @@ mintchip <- function(interactions = NULL,
                      xmin = NULL,
                      xmax = NULL,
                      color_palette = "Dark2",
-                     curvature = -0.5) {
+                     curvature = -0.25) {
 
   ## Name:
   cat("\n\n")
@@ -247,6 +250,18 @@ mintchip <- function(interactions = NULL,
   if('annotation' %in% colnames(interactions)){
     cat(message('annotations column identified in the interactions table.\n'))
     annotation = T
+  }
+  
+  ## checking to see if there is a strand column in the interactions table
+  if('strand' %in% colnames(interactions)){
+    cat(message('strand column identified in the interactions table.\n'))
+    ## making sure that strand is only + or -
+    if(!all(unique(interactions$strand) %in% c('+', '-'))){
+      stop(message("the 'strand' column in the interactions table must only have the values '+' and '-'"))
+    }
+  } else{
+    cat(message('strand column not identified in the interactions table.\n'))
+    interactions$strand = '+'
   }
 
 
@@ -418,7 +433,7 @@ mintchip <- function(interactions = NULL,
   ## a legend annotation (annotate) which puts colored text
   ## where the text is the category and the color maps to the plot color
   ## Sets the xlab to chr9 genomic position (feel free to change this)
-  p = ggplot(interactions, aes(x = start, y = 1)) +
+  p = ggplot(interactions, aes(x = start, y = 0)) +
     theme_classic() +
     scale_color_manual(values = legend_colors) +
     xlab('Genomic Position') + ylab('') +
@@ -437,9 +452,35 @@ mintchip <- function(interactions = NULL,
   ## plotting the curves
   cat(message(paste('Fitting ',nrow(interactions), ' interactions', '\n')))
   interactions$color = mapvalues(interactions$annotation, from = fill_colors$uni_fill, to = fill_colors$color)
-  p = p + geom_curve(data = interactions,aes(x = start, xend = end, y = 0, yend= 0),
-                     lineend = "round", curvature = curvature,ncp = 20, alpha = alpha,
-                     linewidth = interactions$thickness, color = interactions$color)
+  ## setting up the plot window
+  y_max = 0
+  y_min = 0
+  ## plotting top strand
+  if('+' %in% interactions$strand){
+    ## if curvature is -, this will be on the top, else if its + then will be on the bottom
+    y_set_pos = ifelse(curvature < 0, 0, -0.5)
+    ## plot windows
+    y_min = min(ifelse(curvature < 0, 0, -1.5),y_min)
+    y_max = max(ifelse(curvature < 0, 1, 0), y_max)
+    interactions_top = interactions[strand == '+']
+    p = p + geom_curve(data = interactions_top,aes(x = start, xend = end, y = y_set_pos, yend= y_set_pos),
+                       lineend = "round", curvature = curvature,ncp = 20, alpha = alpha,
+                       linewidth = interactions_top$thickness, color = interactions_top$color)
+    
+  }
+  ## plotting bottom strand
+  if('-' %in% interactions$strand){
+    ## if curvature is -, this will be on the bot, else if its + then will be on the top
+    y_set_neg = ifelse(curvature < 0, -0.5, 0)
+    ## plot windows
+    y_min = min(ifelse(curvature < 0, -1.5, 0),y_min)
+    y_max = max(ifelse(curvature < 0, 0, 1), y_max)
+    interactions_bot = interactions[strand == '-']
+    p = p + geom_curve(data = interactions_bot,aes(x = start, xend = end, y = y_set_neg, yend= y_set_neg),
+                       lineend = "round", curvature = -curvature,ncp = 20, alpha = alpha,
+                       linewidth = interactions_bot$thickness, color = interactions_bot$color)
+
+  }
   ## This is the code that creates the gene boxes and names for plotting
   ## note we do a for loop and iteratively add each genebox and name
   if(!is.null(features)){
@@ -449,6 +490,7 @@ mintchip <- function(interactions = NULL,
       p = p + geom_polygon(data = feature,mapping=aes(x = x, y = y)) +
         annotate(geom="text", x=sum(feature$x)/4, y=-0.2, label=feature$name[1], col = feature$color[1], size = 2)
     }
+    y_min = min(-0.5,y_min)
   }
   ## Check to see if we have any gene annotations, if we do, add them here
   if(!is.null(dt_poly_genes)){
@@ -463,7 +505,11 @@ mintchip <- function(interactions = NULL,
           annotate(geom="text", x=sum(gene$x)/4, y=min(gene$y -0.05), label=gene$name[1], col = gene$color[1], size = 2)
       }
     }
+    y_min = min(-0.5,y_min)
   }
+  
+  ## Setting the plot window
+  p = p + scale_y_continuous(limits = c(y_min, y_max))
 
   return(p)
 
