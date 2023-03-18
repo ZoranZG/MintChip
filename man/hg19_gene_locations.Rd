@@ -20,51 +20,17 @@ A data.table with 46,096 rows and 12 columns:
   \item{type.1}{Artifact of the original dataset used to generate this file}
   \item{tx.ord}{Artifact of the original dataset used to generate this file}
 }
-
-## `hg19_gene_locations`
-A data.table with 46,096 rows and 12 columns:
-\describe{
-  \item{seqnames}{Chromosome location}
-  \item{start,end}{start and end of the gene from build hg19, includes UTRs}
-  \item{strand}{Strand of the transcribed gene}
-  \item{width}{Width of the transcribed gene}
-  \item{gene_name}{Gene name}
-  \item{transcript_name}{Transcript name}
-  \item{transcript_id}{Gencode transcript ID}
-  \item{type}{Artifact of the original dataset used to generate this file}
-  \item{exon_number}{Artifact of the original dataset used to generate this file}
-  \item{type.1}{Artifact of the original dataset used to generate this file}
-  \item{tx.ord}{Artifact of the original dataset used to generate this file}
-}
 }
 \source{
-<http://mskilab.com/gTrack/hg19//gencode.composite.collapsed.rds>
-
 <http://mskilab.com/gTrack/hg19//gencode.composite.collapsed.rds>
 }
 \usage{
 hg19_gene_locations
-
-hg19_gene_locations
 }
 \description{
 Gencode gene locations. Includes the exons, introns and UTRs
-
-Gencode gene locations. Includes the exons, introns and UTRs
 }
 \details{
-Code used to generate dataset:
-install_github(mskilab/gTrack)
-library(gTrack)
-gt19 = track.gencode(build = 'hg19')
-dat = gt19@data
-dt_19 = mclapply(1:length(dat[[1]]), function(x){
-  g = dat[[1]][[x]]
-  gr2dt(g[g$type == 'gene'])
-}, mc.cores = 8)
-hg19_gene_locations = rbindlist(dt_19)
-usethis::use_data(hg19_gene_locations)
-
 Code used to generate dataset:
 install_github(mskilab/gTrack)
 library(gTrack)

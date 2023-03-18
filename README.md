@@ -259,3 +259,4 @@ mintchip(interactions = mint_flip,
 ```
 <img src="images/Tutorial_Image_16.svg" alt="some text"  width="1000" height="250">
 
+

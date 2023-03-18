@@ -6,7 +6,7 @@
 \title{Genomic build hg38 gencode gene locations}
 \format{
 ## `hg38_gene_locations`
-A data.table with 48,532 rows and 12 columns:
+A data.table with 46,096 rows and 12 columns:
 \describe{
   \item{seqnames}{Chromosome location}
   \item{start,end}{start and end of the gene from build hg19, includes UTRs}
@@ -40,7 +40,7 @@ dt_38 = mclapply(1:length(dat[[1]]), function(x){
   g = dat[[1]][[x]]
   gr2dt(g[g$type == 'gene'])
 }, mc.cores = 8)
-hg38_gene_locations = rbindlist(dt_19)
+hg38_gene_locations = rbindlist(dt_38)
 usethis::use_data(hg38_gene_locations)
 }
 \keyword{datasets}

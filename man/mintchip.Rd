@@ -15,7 +15,8 @@ mintchip(
   xmin = NULL,
   xmax = NULL,
   color_palette = "Dark2",
-  curvature = -0.25
+  curvature = -0.25,
+  number_of_points_for_drawing_line = 20
 )
 }
 \arguments{

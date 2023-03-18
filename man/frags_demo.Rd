@@ -12,40 +12,14 @@ A data.table with 143 rows and 4 columns:
   \item{thickness}{example strand thicknesses for demo interactions}
   \item{annotation}{example annotations for demo interactions}
 }
-
-## `features_demo`
-A data.table with 4 rows and 2 columns:
-\describe{
-  \item{start,end}{start and end of the sample features}
-}
-
-## `frags_demo`
-A data.table with 143 rows and 4 columns:
-\describe{
-  \item{start,end}{start and end of the sample features}
-  \item{thickness}{example strand thicknesses for demo}
-  \item{annotation}{example annotations for demo}
-}
 }
 \source{
-Xue et al.
-
-Xue et al.
-
 Xue et al.
 }
 \usage{
 frags_demo
-
-frags_demo
-
-frags_demo
 }
 \description{
 Sample interactions obtained from Xue et al.
-
-Sample features for demo, shares some start and end locations with interactions
-
-Sample fragments obtained from Xue et al.
 }
 \keyword{datasets}

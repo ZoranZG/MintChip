@@ -75,42 +75,29 @@
 #'   \item{start,end}{start and end of the sample features}
 #' }
 #' @source Xue et al.
-"frags_demo"
+"features_demo"
 
 
-#' Sample fragments for demo
-#'
-#' Sample fragments obtained from Xue et al.
-#'
-#' @format ## `frags_demo`
-#' A data.table with 143 rows and 4 columns:
-#' \describe{
-#'   \item{start,end}{start and end of the sample features}
-#'   \item{thickness}{example strand thicknesses for demo}
-#'   \item{annotation}{example annotations for demo}
-#' }
-#' @source Xue et al.
-"frags_demo"
 
 
-#' Genomic build hg19 gencode gene locations
+#' Genomic build hg38 gencode gene locations
 #'
 #' Gencode gene locations. Includes the exons, introns and UTRs
 #'
 #' Code used to generate dataset:
 #' install_github(mskilab/gTrack)
 #' library(gTrack)
-#' gt19 = track.gencode(build = 'hg19')
-#' dat = gt19@data
-#' dt_19 = mclapply(1:length(dat[[1]]), function(x){
+#' gt38 = track.gencode(build = 'hg38')
+#' dat = gt38@data
+#' dt_38 = mclapply(1:length(dat[[1]]), function(x){
 #'   g = dat[[1]][[x]]
 #'   gr2dt(g[g$type == 'gene'])
 #' }, mc.cores = 8)
-#' hg19_gene_locations = rbindlist(dt_19)
-#' usethis::use_data(hg19_gene_locations)
+#' hg38_gene_locations = rbindlist(dt_38)
+#' usethis::use_data(hg38_gene_locations)
 #'
 #'
-#' @format ## `hg19_gene_locations`
+#' @format ## `hg38_gene_locations`
 #' A data.table with 46,096 rows and 12 columns:
 #' \describe{
 #'   \item{seqnames}{Chromosome location}
@@ -125,8 +112,8 @@
 #'   \item{type.1}{Artifact of the original dataset used to generate this file}
 #'   \item{tx.ord}{Artifact of the original dataset used to generate this file}
 #' }
-#' @source <http://mskilab.com/gTrack/hg19//gencode.composite.collapsed.rds>
-"hg19_gene_locations"
+#' @source <http://mskilab.com/gTrack/hg38//gencode.composite.collapsed.rds>
+"hg38_gene_locations"
 
 
 #' @name mintchip
@@ -191,7 +178,8 @@ mintchip <- function(interactions = NULL,
                      xmin = NULL,
                      xmax = NULL,
                      color_palette = "Dark2",
-                     curvature = -0.25) {
+                     curvature = -0.25,
+                     number_of_points_for_drawing_line = 20) {
 
   ## Name:
   cat("\n\n")
@@ -464,7 +452,7 @@ mintchip <- function(interactions = NULL,
     y_max = max(ifelse(curvature < 0, 1, 0), y_max)
     interactions_top = interactions[strand == '+']
     p = p + geom_curve(data = interactions_top,aes(x = start, xend = end, y = y_set_pos, yend= y_set_pos),
-                       lineend = "round", curvature = curvature,ncp = 20, alpha = alpha,
+                       lineend = "round", curvature = curvature,ncp = number_of_points_for_drawing_line, alpha = alpha,
                        linewidth = interactions_top$thickness, color = interactions_top$color)
     
   }
@@ -477,7 +465,7 @@ mintchip <- function(interactions = NULL,
     y_max = max(ifelse(curvature < 0, 0, 1), y_max)
     interactions_bot = interactions[strand == '-']
     p = p + geom_curve(data = interactions_bot,aes(x = start, xend = end, y = y_set_neg, yend= y_set_neg),
-                       lineend = "round", curvature = -curvature,ncp = 20, alpha = alpha,
+                       lineend = "round", curvature = -curvature,ncp = number_of_points_for_drawing_line, alpha = alpha,
                        linewidth = interactions_bot$thickness, color = interactions_bot$color)
 
   }
